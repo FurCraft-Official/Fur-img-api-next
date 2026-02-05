@@ -41,7 +41,7 @@
         "console": true,
         "file": true,
         "maxFiles": 7,
-        "maxSize": "10M"
+        "maxSize": 1
     },
     "paths": {
         "html": "./public",

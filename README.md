@@ -80,7 +80,8 @@ npm install
     "level": 4,                     // 日志级别（0=silent, 1=fatal, 2=error, 3=warn, 4=info, 5=debug, 6=trace）
     "console": true,                // 是否输出到控制台
     "file": true,                   // 是否输出到文件
-    "maxFiles": 7                   // 保留的最大日志文件数
+    "maxFiles": 7,                   // 保留的最大日志文件数
+    "maxSize": 1                    //保留的最大日志，单位是MB
   },
   "paths": {
     "html": "./public",             // 静态网站文件目录
@@ -240,7 +241,8 @@ GET /files/path/to/file.jpg
   "level": 4,           // 日志级别：4=info
   "console": true,      // 是否在控制台打印
   "file": true,         // 是否保存到文件
-  "maxFiles": 7         // 保留最近 7 天的日志
+  "maxFiles": 7,         // 保留最近 7 天的日志
+  "maxSize": 1          //保留最大1MB的日志
 }
 ```
 

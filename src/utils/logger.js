@@ -1,9 +1,11 @@
-// logger.js
 import pino from 'pino';
 import pretty from 'pino-pretty';
 import fs from 'fs-extra';
 import { join } from 'path';
 import dayjs from 'dayjs';
+
+// 强制开启颜色显示，解决 Windows 环境下颜色对不上的问题
+process.env.FORCE_COLOR = '1';
 
 const LOG_LEVELS = {
     0: 'silent',
@@ -15,7 +17,6 @@ const LOG_LEVELS = {
     6: 'trace'
 };
 
-// 你自定义的文本格式化流
 class FileStream {
     constructor(filePath) {
         this.stream = fs.createWriteStream(filePath, { flags: 'a' });
@@ -46,7 +47,7 @@ class FileStream {
 
             this.stream.write(output);
         } catch (e) {
-            this.stream.write(msg);
+            this.stream.write(msg + '\n');
         }
     }
 
@@ -63,11 +64,29 @@ class FileStream {
     }
 }
 
+// 检查单个文件大小，超过则重命名归档
+async function checkAndRotateSize(filePath, maxSizeMB) {
+    if (!maxSizeMB || maxSizeMB <= 0) return;
+    try {
+        if (await fs.pathExists(filePath)) {
+            const stats = await fs.stat(filePath);
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+            if (stats.size > maxSizeBytes) {
+                // 如果文件太大，将其重命名为：app-2026-02-05.172230.bak
+                const archivePath = `${filePath}.${dayjs().format('HHmmss')}.bak`;
+                await fs.move(filePath, archivePath);
+            }
+        }
+    } catch (err) {
+        console.error('Failed to rotate log by size:', err);
+    }
+}
+
 async function rotateOldLogs(logPath, maxFiles) {
     try {
         const files = await fs.readdir(logPath);
         const logFiles = files
-            .filter(f => f.startsWith('app-') && f.endsWith('.log'))
+            .filter(f => (f.startsWith('app-') && f.endsWith('.log')) || f.endsWith('.bak'))
             .map(f => ({
                 name: f,
                 path: join(logPath, f),
@@ -82,28 +101,31 @@ async function rotateOldLogs(logPath, maxFiles) {
             }
         }
     } catch (err) {
-        console.error('Failed to rotate logs:', err);
+        console.error('Failed to rotate logs by count:', err);
     }
 }
 
 let loggerInstance = null;
 
 export async function initLogger(config = {}) {
-    // 转换等级数字为 pino 识别的字符串
     const logLevel = LOG_LEVELS[config.log?.level ?? 4] || 'info';
     const logPath = config.log?.path || './logs';
     const enableConsole = config.log?.console !== false;
     const enableFile = config.log?.file !== false;
     const maxFiles = config.log?.maxFiles || 7;
+    const maxSize = config.log?.maxSize || 10; // 默认 10MB
 
     await fs.ensureDir(logPath);
 
     const streams = [];
 
-    // 1. 文件流
     if (enableFile) {
         const logFileName = `app-${dayjs().format('YYYY-MM-DD')}.log`;
         const logFile = join(logPath, logFileName);
+
+        // --- 新增：写入前先检查大小 ---
+        await checkAndRotateSize(logFile, maxSize);
+
         await fs.ensureFile(logFile);
 
         streams.push({
@@ -112,7 +134,6 @@ export async function initLogger(config = {}) {
         });
     }
 
-    // 2. 控制台流 (使用 pino-pretty)
     if (enableConsole) {
         streams.push({
             level: logLevel,
@@ -120,7 +141,6 @@ export async function initLogger(config = {}) {
                 colorize: true,
                 translateTime: 'yyyy-mm-dd HH:MM:ss',
                 ignore: 'pid,hostname',
-                // 使用你想要的格式：[时间] [等级] 消息
                 messageFormat: '{msg}',
                 customColors: 'trace:gray,debug:blue,info:green,warn:yellow,error:red,fatal:bgRed',
                 errorLikeObjectKeys: ['err', 'error']
@@ -128,16 +148,11 @@ export async function initLogger(config = {}) {
         });
     }
 
-    // 3. 创建多流实例
-    // 注意：使用 multistream 时，外层的 level 必须设为最低级别(如 'trace')
-    // 或者设为跟 config 一致，否则内层的流会被外层拦截
     loggerInstance = pino(
         {
             level: logLevel,
             timestamp: pino.stdTimeFunctions.isoTime,
-            serializers: {
-                err: pino.stdSerializers.err
-            }
+            serializers: { err: pino.stdSerializers.err }
         },
         pino.multistream(streams)
     );
@@ -151,7 +166,6 @@ export async function initLogger(config = {}) {
 
 export function getLogger() {
     if (!loggerInstance) {
-        // 提供一个后备，防止初始化前调用报错
         return pino({ level: 'info' });
     }
     return loggerInstance;
