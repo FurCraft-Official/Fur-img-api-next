@@ -1,10 +1,10 @@
-import express from "express";
+import express from 'express';
 import http from 'http';
 import https from 'https';
-import logger from "../utils/loggerInstance.js";
+import logger from '../utils/loggerInstance.js';
 import fs from 'fs-extra';
 import path from 'path';
-import { createRoute } from "./api.js";
+import { createRoute } from './api.js';
 const app = express();
 
 

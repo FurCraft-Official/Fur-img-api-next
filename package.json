@@ -3,7 +3,9 @@
   "version": "3.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": "114514-lang",
   "license": "GPL-3.0-only",

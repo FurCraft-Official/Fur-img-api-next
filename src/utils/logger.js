@@ -1,7 +1,7 @@
-import chalk from "chalk";
-import fs from "fs-extra";
-import path from "path";
-import dayjs from "dayjs";
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
 let config = null;
@@ -13,13 +13,13 @@ const levels = {
     debug: 0,
     info: 1,
     warn: 2,
-    error: 3,
+    error: 3
 };
 const colors = {
     info: chalk.blue,
     warn: chalk.yellow,
     error: chalk.red,
-    debug: chalk.green,
+    debug: chalk.green
 };
 async function createlog(level, message, ...args) {
     try {

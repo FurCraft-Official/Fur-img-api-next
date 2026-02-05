@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
-import logger from "../utils/loggerInstance.js";
-import { getRandomFromAll, getRandomFromFolder, clearDatabase, flush, saveToDatabase, getAllFilelist } from "../database/db.js";
+import logger from '../utils/loggerInstance.js';
+import { getRandomFromAll, getRandomFromFolder, clearDatabase, flush, saveToDatabase, getAllFilelist } from '../database/db.js';
 import { scanDirectory } from '../utils/scanner.js';
 import { JSON, requestLogger, authMiddleware } from './middleware.js';
 import cors from 'cors';
@@ -20,10 +20,10 @@ async function createRoute(db, config, app, express) {
     if (config.server.cors.enable) {
         // 启用cors中间件
         const corsConfig = {
-            "origin": config.server.cors.origins,
-            "methods": config.server.cors.methods,
-            "preflightContinue": config.server.cors.preflightContinue,
-            "optionsSuccessStatus": config.server.cors.optionsSuccessStatus
+            'origin': config.server.cors.origins,
+            'methods': config.server.cors.methods,
+            'preflightContinue': config.server.cors.preflightContinue,
+            'optionsSuccessStatus': config.server.cors.optionsSuccessStatus
         };
         app.use(cors(corsConfig));
     }
@@ -36,7 +36,7 @@ async function createRoute(db, config, app, express) {
             legacyHeaders: config.server.rateLimit.legacyHeaders,
             validate: config.server.rateLimit.validate,
             message: config.server.rateLimit.message,
-            statusCode: config.server.rateLimit.statusCode,
+            statusCode: config.server.rateLimit.statusCode
         });
         app.use(limiter);
     }
@@ -224,14 +224,14 @@ async function createRoute(db, config, app, express) {
     });
     app.use((req, res) => {
         // 404处理
-        res.status(404).json({ message: "Not Fount" });
+        res.status(404).json({ message: 'Not Fount' });
     });
 
     // 全局异常捕获 (Express 5)
     app.use((err, req, res, next) => {
-        logger.error(`Server Error: `, err);
+        logger.error('Server Error: ', err);
         if (!res.headersSent) {
-            res.status(500).json({ error: "Internal server error" });
+            res.status(500).json({ error: 'Internal server error' });
         }
     });
     // 挂载静态目录

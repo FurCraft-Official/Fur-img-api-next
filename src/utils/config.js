@@ -5,50 +5,50 @@ async function initConfig() {
     try {
         const exists = await fs.pathExists(path.resolve('./config/config.json'));
         const data = {
-            "server": {
-                "addr": "localhost",
-                "httpport": 3000,
-                "httpsport": 3001,
-                "forcehttps": false,
-                "gzip": false,
-                "ssl": {
-                    "enable": false,
-                    "cert": "./ssl/fullchain.pem",
-                    "key": "./ssl/privkey.pem"
+            'server': {
+                'addr': 'localhost',
+                'httpport': 3000,
+                'httpsport': 3001,
+                'forcehttps': false,
+                'gzip': false,
+                'ssl': {
+                    'enable': false,
+                    'cert': './ssl/fullchain.pem',
+                    'key': './ssl/privkey.pem'
                 },
-                "cors": {
-                    "enabled": true,
-                    "origins": "*",
-                    "methods": "GET, POST, PUT, DELETE, OPTIONS",
-                    "preflightContinue": false,
-                    "optionsSuccessStatus": 204
+                'cors': {
+                    'enabled': true,
+                    'origins': '*',
+                    'methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'preflightContinue': false,
+                    'optionsSuccessStatus': 204
                 },
-                "rateLimit": {
-                    "enable": true,
-                    "windowMS": 15,
-                    "limit": 100,
-                    "statusCode": 429,
-                    "message": "too many requests",
-                    "standardHeaders": "draft-8",
-                    "legacyHeaders": false,
-                    "validate": {
-                        "trustProxy": false
+                'rateLimit': {
+                    'enable': true,
+                    'windowMS': 15,
+                    'limit': 100,
+                    'statusCode': 429,
+                    'message': 'too many requests',
+                    'standardHeaders': 'draft-8',
+                    'legacyHeaders': false,
+                    'validate': {
+                        'trustProxy': false
                     }
                 }
             },
-            "db": {
-                "sqlite3": {
-                    "file": "./data/app.db"
+            'db': {
+                'sqlite3': {
+                    'file': './data/app.db'
                 }
             },
-            "log": {
-                "path": "./logs",
-                "level": 4
+            'log': {
+                'path': './logs',
+                'level': 4
             },
-            "paths": {
-                "images": "./tupian"
+            'paths': {
+                'images': './tupian'
             },
-            "admintoken": "114514"
+            'admintoken': '114514'
         };
         if (!exists) {
             try {

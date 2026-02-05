@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import logger from '../utils/loggerInstance.js';
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 import config from '../utils/config.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
@@ -45,7 +45,7 @@ function authMiddleware(req, res, next) {
     const adminToken = config.admintoken;
     const clientToken = req.query.token;
 
-    if (!adminToken || adminToken.trim() === "") {
+    if (!adminToken || adminToken.trim() === '') {
         return res.status(401).json({ error: 'unauthorized_server_config' });
     }
 

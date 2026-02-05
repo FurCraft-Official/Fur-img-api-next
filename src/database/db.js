@@ -1,10 +1,10 @@
-import fs from "fs-extra";
-import path from "path";
-import Database from "better-sqlite3";
-import logger from "../utils/loggerInstance.js";
+import fs from 'fs-extra';
+import path from 'path';
+import Database from 'better-sqlite3';
+import logger from '../utils/loggerInstance.js';
 
 let buffer = [];
-let BATCH_SIZE = 1000;
+const BATCH_SIZE = 1000;
 async function initDatabase(config) {
     try {
         if (fs.existsSync(path.resolve(config.db.sqlite3.file))) {
