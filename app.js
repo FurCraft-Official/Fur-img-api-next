@@ -8,6 +8,7 @@ import { startWebserver } from './src/web/server.js';
 
 async function main() {
     try {
+        // 初始化数据库
         const mydb = await initDatabase(config);
         mydb.pragma('journal_mode = WAL');
         await clearDatabase(mydb);
@@ -16,6 +17,7 @@ async function main() {
         });
         flush(mydb);
         logger.info(`finished to scan ${config.paths.images}`);
+        // 启动express服务器
         startWebserver(config, mydb);
     }
     catch (e) {

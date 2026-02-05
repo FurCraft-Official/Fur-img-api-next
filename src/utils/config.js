@@ -52,6 +52,7 @@ async function initConfig() {
         };
         if (!exists) {
             try {
+                // 初始化配置
                 await fs.outputJsonSync(path.resolve('./config/config.json'), data, { spaces: 4 });
                 console.log('Default configuration file created at ./config/config.json');
             } catch (e) {

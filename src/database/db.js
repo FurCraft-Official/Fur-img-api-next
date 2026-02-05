@@ -8,10 +8,12 @@ let BATCH_SIZE = 1000;
 async function initDatabase(config) {
     try {
         if (fs.existsSync(path.resolve(config.db.sqlite3.file))) {
+            // 创建新数据库
             const db = new Database(config.db.sqlite3.file);
             logger.info(`Database file found at ${config.db.sqlite3.file}`);
             return db;
         } else {
+            // 读取数据库
             const dbFile = config.db.sqlite3.file;
             const db = new Database(dbFile);
             db.prepare(`

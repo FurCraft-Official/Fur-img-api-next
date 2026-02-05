@@ -14,9 +14,11 @@ dayjs.extend(duration);
 
 async function createRoute(db, config, app, express) {
     app.use((req, res, next) => {
+        // 日志中间件
         requestLogger(req, res, next);
     });
     if (config.server.cors.enable) {
+        // 启用cors中间件
         const corsConfig = {
             "origin": config.server.cors.origins,
             "methods": config.server.cors.methods,
@@ -26,6 +28,7 @@ async function createRoute(db, config, app, express) {
         app.use(cors(corsConfig));
     }
     if (config.server.rateLimit.enable) {
+        // 启用访问速率限制
         const limiter = rateLimit({
             windowMs: config.server.rateLimit.windowMS * 60 * 1000,
             limit: config.server.rateLimit.limit,
@@ -207,6 +210,7 @@ async function createRoute(db, config, app, express) {
     }); app.post('/admin/refresh', authMiddleware, async (req, res) => {
         try {
             res.status(200).json({ message: 'refresh database start' });
+            // 重新写入数据库
             await clearDatabase(db);
             await scanDirectory(config.paths.images, async (item) => {
                 await saveToDatabase(db, item);
@@ -219,6 +223,7 @@ async function createRoute(db, config, app, express) {
         }
     });
     app.use((req, res) => {
+        // 404处理
         res.status(404).json({ message: "Not Fount" });
     });
 
@@ -229,6 +234,7 @@ async function createRoute(db, config, app, express) {
             res.status(500).json({ error: "Internal server error" });
         }
     });
+    // 挂载静态目录
     app.use('/files', express.static(config.paths.images));
     function getMimeType(filename) {
         const ext = path.extname(filename).toLowerCase();

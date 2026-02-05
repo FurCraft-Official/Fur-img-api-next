@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import logger from "./loggerInstance.js";
-
+// 递归扫描配置目录
 export const scanDirectory = async (fullPath, callback) => {
     try {
         const dir = await fs.opendir(path.resolve(fullPath), { withFileTypes: true });

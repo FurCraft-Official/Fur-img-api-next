@@ -11,11 +11,13 @@ const app = express();
 async function startWebserver(config, db) {
     const createWebServer = (config) => {
         try {
+            // 创建http服务器
             const httpserver = http.createServer(app);
             httpserver.listen(config.server.httpport, config.server.addr, () => {
                 logger.info(`http listen at http://${config.server.addr}:${config.server.httpport}`);
             });
             if (config.server.ssl.enable) {
+                // 创建https服务器
                 const ssl = {
                     key: fs.readFileSync(path.resolve(config.server.ssl.key)),
                     cert: fs.readFileSync(path.resolve(config.server.ssl.cert))
@@ -30,7 +32,9 @@ async function startWebserver(config, db) {
             process.exit(1);
         }
     };
+    // 挂载路由
     createRoute(db, config, app, express);
+    // 创建web服务器
     createWebServer(config);
 }
 
