@@ -18,8 +18,9 @@ const LOG_LEVELS = {
 };
 
 class FileStream {
-    constructor(filePath) {
+    constructor(filePath, workerTag = '') {
         this.stream = fs.createWriteStream(filePath, { flags: 'a' });
+        this.workerTag = workerTag;
     }
 
     write(msg) {
@@ -27,6 +28,7 @@ class FileStream {
             const log = JSON.parse(msg);
             const timestamp = `[${dayjs(log.time).format('YYYY-MM-DD HH:mm:ss')}]`;
             const level = this.formatLevel(log.level);
+            const workerPrefix = this.workerTag ? `${this.workerTag}` : '';
             const message = log.msg || '';
 
             let errorInfo = '';
@@ -43,7 +45,7 @@ class FileStream {
                 .join(' ');
 
             const extrasPart = extras ? ` ${extras}` : '';
-            const output = `${timestamp} ${level} ${message}${extrasPart}${errorInfo}\n`;
+            const output = `${timestamp} ${level} ${workerPrefix}${message}${extrasPart}${errorInfo}\n`;
 
             this.stream.write(output);
         } catch (e) {
@@ -137,7 +139,7 @@ export async function initLogger(config = {}) {
 
         streams.push({
             level: logLevel,
-            stream: new FileStream(logFile)
+            stream: new FileStream(logFile, workerTag)
         });
     }
 
@@ -146,7 +148,7 @@ export async function initLogger(config = {}) {
             level: logLevel,
             stream: pretty({
                 colorize: true,
-                translateTime: 'yyyy-mm-dd HH:MM:ss',
+                translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
                 ignore: 'pid,hostname',
                 messageFormat: workerTag + '{msg}', // 在这里添加 worker 标识
                 customColors: 'trace:gray,debug:blue,info:green,warn:yellow,error:red,fatal:bgRed',
