@@ -8,7 +8,7 @@ dayjs.extend(customParseFormat);
 
 const JSON = (fileObj, baseScanPath) => {
     try {
-        const absolutePath = path.resolve(fileObj.path, fileObj.file);
+        const absolutePath = path.resolve(fileObj.path);
         const stats = fs.statSync(absolutePath);
 
         // 计算相对路径用于拼接 URL

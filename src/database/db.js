@@ -7,25 +7,31 @@ let buffer = [];
 const BATCH_SIZE = 1000;
 async function initDatabase(config) {
     try {
-        if (fs.existsSync(path.resolve(config.db.sqlite3.file))) {
-            // 创建新数据库
-            const db = new Database(config.db.sqlite3.file);
-            logger.info('Database file found at %s', config.db.sqlite3.file);
-            return db;
-        } else {
-            // 读取数据库
-            const dbFile = config.db.sqlite3.file;
-            const db = new Database(dbFile);
+        const dbFile = path.resolve(config.db.sqlite3.file);
+        const fileExists = fs.existsSync(dbFile);
+
+        const db = new Database(dbFile);
+
+        if (!fileExists) {
+            // 只有在文件不存在（新创建）时才初始化表结构
+            // 在 initDatabase 的 CREATE TABLE 语句中添加：
             db.prepare(`
-            CREATE TABLE IF NOT EXISTS files (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            file TEXT,
-            path TEXT,
-            type TEXT
-        );`).run();
-            logger.info('Database initialized at %s', dbFile);
-            return db;
+                CREATE TABLE IF NOT EXISTS files (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                file TEXT,
+                path TEXT,
+                relative_path TEXT,
+                relative_dir TEXT,
+                type TEXT
+                );
+        `).run();
+            logger.info('Database created and initialized at %s', dbFile);
+        } else {
+            logger.info('Database file found at %s', dbFile);
+            // 可选：如果表已存在但没有新字段，可以执行 ALTER TABLE 语句
         }
+
+        return db;
     } catch (e) {
         logger.error({ err: e }, 'Failed to initialize database');
     }
@@ -41,22 +47,29 @@ async function saveToDatabase(db, item) {
 function flush(db) {
     if (buffer.length === 0 || !db) return;
 
-    // 1. 预编译 SQL 语句
-    const insert = db.prepare('INSERT OR IGNORE INTO files (file, path, type) VALUES (@file, @path, @type)');
+    try {
+        // 1. 预编译 SQL 语句，加入 relative_path
+        // 注意：SQL 里的 @relativePath 对应对象中的键名
+        const insert = db.prepare(`
+            INSERT OR IGNORE INTO files (file, path, relative_path, relative_dir, type) 
+            VALUES (@file, @path, @relativePath, @relativeDir, @type)
+        `);
 
-    // 2. 创建一个事务 (better-sqlite3 的杀手锏)
-    const insertMany = db.transaction((items) => {
-        for (const item of items) {
-            // 这里直接传对象，只要对象的 key 和 SQL 里的 @key 对应就行
-            insert.run(item);
-        }
-    });
+        // 2. 创建并执行事务
+        const insertMany = db.transaction((items) => {
+            for (const item of items) {
+                insert.run(item);
+            }
+        });
 
-    // 3. 执行事务
-    insertMany(buffer);
+        insertMany(buffer);
 
-    // 4. 清空缓存
-    buffer = [];
+        // 3. 清空缓存
+        buffer = [];
+        logger.debug('Batch insert successful');
+    } catch (e) {
+        logger.error({ err: e }, 'Error during database flush');
+    }
 }
 
 function getRandomFromAll(db) {
@@ -69,18 +82,18 @@ function getRandomFromAll(db) {
 }
 
 // 函数 2：从特定文件夹（及其子文件夹，如果你想要的话）选一个
-function getRandomFromFolder(db, folderPath) {
-    const queryParam = `%${folderPath}%`;
-
+function getRandomFromFolder(db, folderRelativePath) {
+    // 这里的 folderRelativePath 传入例如 "img/screenshots"
     return db.prepare(`
         SELECT * FROM files 
-        WHERE path LIKE ? AND type = 'file' 
+        WHERE relative_dir = ? 
+        AND type = 'file' 
         ORDER BY RANDOM() 
         LIMIT 1
-    `).get(queryParam);
+    `).get(folderRelativePath);
 }
 export function getAllFilelist(db) {
-    const stmt = db.prepare('SELECT file, path, type FROM files');
+    const stmt = db.prepare('SELECT * FROM files');
     return stmt.all();
 }
 

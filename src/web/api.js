@@ -56,7 +56,7 @@ async function createRoute(db, config, app, express) {
                 return res.json(json);
             }
 
-            const filePath = path.resolve(file.path, file.file);
+            const filePath = path.resolve(file.path);
 
             // 检查文件是否存在
             if (!fs.existsSync(filePath)) {
@@ -94,7 +94,7 @@ async function createRoute(db, config, app, express) {
 
     app.get('/api/*splat', (req, res) => {
         try {
-            const urlFolder = req.params[0]; // Express 4/5 兼容写法
+            const urlFolder = req.params.splat[0]; // Express 4/5 兼容写法
             const file = getRandomFromFolder(db, urlFolder);
 
             if (!file) {
@@ -106,7 +106,7 @@ async function createRoute(db, config, app, express) {
                 return res.json(json);
             }
 
-            const filePath = path.resolve(file.path, file.file);
+            const filePath = path.resolve(file.path);
 
             // 检查文件是否存在
             if (!fs.existsSync(filePath)) {
@@ -173,48 +173,41 @@ async function createRoute(db, config, app, express) {
     });
     app.get('/filelist', (req, res) => {
         try {
+            // 假设 getAllFilelist(db) 返回的是 SELECT * FROM files 的结果
             const rows = getAllFilelist(db);
             const result = {};
 
             rows.forEach(row => {
-                const { file, path: absolutePath, type } = row;
+                // 直接解构我们新加的字段
+                const { file, relative_path, relative_dir, type } = row;
 
-                // 过滤掉目录类型
+                // 1. 过滤掉目录类型
                 if (type === 'directory') {
                     return;
                 }
 
-                // 从绝对路径中提取文件夹路径
-                const folderPath = absolutePath.substring(0, absolutePath.lastIndexOf(path.sep));
+                // 2. 规范化文件夹 Key
+                // 如果 relativeDir 是空字符串（代表根目录），统一用 '.'
+                const folderKey = relative_dir || '.';
 
-                // 提取相对于配置目录的路径
-                // 例如: E:\images\photos\2024\photo.jpg -> photos/2024
-                const relativeFolderPath = folderPath
-                    .replace(config.paths.images, '')
-                    .replace(/^[\\\/]+/, '') // 移除开头的斜杠
-                    .replace(/\\/g, '/') || '.'; // 转换为正斜杠，空路径用 '.'
-
-                // 完整的相对文件路径
-                const relativeFilePath = absolutePath
-                    .replace(config.paths.images, '')
-                    .replace(/^[\\\/]+/, '')
-                    .replace(/\\/g, '/');
-
-                // 如果该文件夹还不存在，创建一个空对象
-                if (!result[relativeFolderPath]) {
-                    result[relativeFolderPath] = {};
+                // 3. 初始化文件夹对象
+                if (!result[folderKey]) {
+                    result[folderKey] = {};
                 }
 
-                // 添加文件名，值为可访问的URL路径
-                result[relativeFolderPath][file] = `/files/${relativeFilePath}`;
+                // 4. 映射文件名到 URL
+                // 直接使用数据库里的 relativePath，只需确保它使用的是正斜杠
+                const urlPath = relative_path.replace(/\\/g, '/');
+                result[folderKey][file] = `/files/${urlPath}`;
             });
 
             res.json(result);
         } catch (e) {
-            logger.error({ err: e }, 'Get files failed');
+            logger.error({ err: e }, 'Get file list failed');
             res.status(500).json({ error: 'get files failed' });
         }
-    }); app.post('/admin/refresh', authMiddleware, async (req, res) => {
+    });
+    app.post('/admin/refresh', authMiddleware, async (req, res) => {
         try {
             res.status(200).json({ message: 'refresh database start' });
             // 重新写入数据库
