@@ -67,7 +67,7 @@ npm install
   },
   "log": {
     "path": "./logs",               // 日志目录
-    "level": 4                      // 日志级别（0-5）
+    "level": 3                      // 日志级别（0-5）
   },
   "paths": {
     "images": "./tupian"            // 图片/文件目录
