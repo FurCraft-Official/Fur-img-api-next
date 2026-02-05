@@ -3,7 +3,7 @@ import path from 'path';
 
 async function initConfig() {
     try {
-        const exists = await fs.pathExists(path.resolve('./config/config.json'));
+        const exists = await fs.pathExists(path.resolve('./data/config.json'));
         const data = {
             'server': {
                 'addr': 'localhost',
@@ -59,7 +59,7 @@ async function initConfig() {
         if (!exists) {
             try {
                 // 初始化配置
-                await fs.outputJsonSync(path.resolve('./config/config.json'), data, { spaces: 4 });
+                await fs.outputJsonSync(path.resolve('./data/config.json'), data, { spaces: 4 });
                 console.log('Default configuration file created at ./config/config.json');
             } catch (e) {
                 console.error('Failed to create default config file:', e);
@@ -72,7 +72,7 @@ async function initConfig() {
 }
 async function readConfig() {
     try {
-        const configData = await fs.readJSON(path.resolve('./config/config.json'));
+        const configData = await fs.readJSON(path.resolve('./data/config.json'));
         return configData;
     } catch (e) {
         console.error('Failed to read config:', e);
