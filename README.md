@@ -33,7 +33,7 @@ npm install
     "addr": "localhost",            // 监听地址
     "httpport": 3000,               // HTTP 端口
     "httpsport": 3001,              // HTTPS 端口
-    "forcehttps": false,            // 是否强制 HTTPS
+    "forcehttps": false,            // 是否强制 HTTPS，暂未开发
     "gzip": false,                  // 是否启用 Gzip 压缩
     "ssl": {
       "enable": false,              // 是否启用 SSL
