@@ -8,3 +8,4 @@ sqlite3.exe
 sqldiff.exe
 sqlite3_analyzer.exe
 sqlite3_rsync.exe
+/nginx

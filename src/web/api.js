@@ -7,7 +7,8 @@ import { routerStatus } from './router/status.js';
 import { rouerMiddlewares } from './router/routermiddleware.js';
 
 
-async function createRoute(config) {
+async function createRoute() {
+    app.set('trust proxy', 'loopback');
     rouerMiddlewares();
     routerRandomIMG();
     routerStaticfiles();
