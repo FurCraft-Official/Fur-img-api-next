@@ -29,7 +29,7 @@ async function rouerMiddlewares() {
             statusCode: config.server.rateLimit.statusCode,
             store: new SqliteStore({
                 location: config.db.sqlite3.file,
-                prefix: 'limiter_'
+                prefix: ''
             })
         });
         app.use(limiter);

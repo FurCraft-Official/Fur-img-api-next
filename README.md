@@ -30,8 +30,13 @@ npm install
 - `pino-http` - HTTP 请求日志中间件
 - `pino-pretty` - 日志格式化
 - `cors` - CORS 中间件
-- `express-rate-limit` - 速率限制
+- `express-rate-limit` - 速率限制中间件
+- `rate-limit-sqlite` - SQLite 持久化速率限制存储
 - `compression` - Gzip 压缩
+- `dayjs` - 日期时间处理
+- `fs-extra` - 增强文件系统操作
+- `chalk` - 终端彩色输出
+- `node-cron` - 定时任务（预留）
 
 ### 配置
 
@@ -214,7 +219,66 @@ Authorization: Bearer 114514
 
 ---
 
-### 6. 直接下载文件
+### 6. 解封单个 IP（管理员）
+
+**请求：**
+```http
+POST /admin/unban/:ip
+Authorization: Bearer 114514
+```
+
+**参数：**
+- `:ip` - 需要解封的 IP 地址
+
+**请求头：**
+- `Authorization: Bearer <admintoken>` - 管理员 Token
+
+**成功响应示例（200）：**
+```json
+{
+  "message": "Successfully unbanned 192.168.1.100"
+}
+```
+
+**错误响应示例（404）：**
+```json
+{
+  "error": "IP not found in banlist"
+}
+```
+
+**说明：** 从速率限制黑名单中移除指定的 IP 地址。
+
+---
+
+### 7. 获取被禁用 IP 列表
+
+**请求：**
+```http
+GET /banlist
+```
+
+**响应示例（有被禁用的 IP）：**
+```json
+{
+  "ip": "192.168.1.100",
+  "totalHits": 150,
+  "resetTime": "2024-01-15T11:30:45.000Z"
+}
+```
+
+**响应示例（无被禁用的 IP）：**
+```json
+{
+  "message": "no banned IPs"
+}
+```
+
+**说明：** 返回所有被速率限制触发禁用的 IP 地址和相关信息。
+
+---
+
+### 8. 直接下载文件
 
 **请求：**
 ```http
@@ -297,24 +361,34 @@ GET /files/path/to/file.jpg
 ```
 .
 ├── app.js                 # 应用入口
-├── config/
-│   └── config.json       # 配置文件
+├── package.json           # 项目配置和依赖
+├── eslint.config.mjs      # ESLint 配置
+├── data/
+│   ├── config.json       # 配置文件
+│   └── app.db            # SQLite 数据库文件
 ├── src/
 │   ├── database/
-│   │   └── db.js         # SQLite 数据库操作
+│   │   └── db.js         # SQLite 数据库操作（增删改查、速率限制）
 │   ├── utils/
 │   │   ├── config.js     # 配置管理
-│   │   ├── logger.js     # 日志工具
-│   │   └── scanner.js    # 目录扫描工具
+│   │   ├── logger.js     # Pino 日志工具（包括日志轮换、格式化）
+│   │   ├── loggerInstance.js  # 日志实例导出
+│   │   └── scanner.js    # 目录扫描工具（递归扫描文件）
 │   └── web/
-│       ├── api.js        # 路由定义
-│       ├── middleware.js # 中间件
-│       └── server.js     # 服务器启动
-├── data/
-│   └── app.db            # SQLite 数据库文件
-├── logs/                 # 日志目录
-├── ssl/                  # SSL 证书（可选）
-└── package.json
+│       ├── server.js     # Express 服务器启动和配置
+│       ├── middleware.js # HTTP 中间件（请求日志、认证）
+│       ├── api.js        # 挂载 API 路由
+│       └── router/       # 路由模块（模块化方式）
+│           ├── admin.js  # 管理员路由（刷新数据库、解封IP）
+│           ├── status.js # 状态路由（健康检查、文件列表、黑名单）
+│           ├── randomimg.js     # 随机图片路由
+│           ├── staticfiles.js   # 静态文件路由
+│           └── routermiddleware.js  # 路由中间件
+├── logs/                 # 日志目录（自动生成）
+│   └── app-YYYY-MM-DD.log   # 日志文件（按日期）
+├── ssl/                  # SSL 证书目录（可选）
+├── public/               # 静态网站文件目录
+└── img/               # 图片/文件自定义目录（可配置）
 ```
 
 ## 开发命令

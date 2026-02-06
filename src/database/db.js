@@ -3,6 +3,7 @@ import path from 'path';
 import Database from 'better-sqlite3';
 import logger from '../utils/loggerInstance.js';
 import config from '../utils/config.js';
+import e from 'express';
 
 let buffer = [];
 const BATCH_SIZE = 1000;
@@ -81,27 +82,6 @@ function getRandomFromAll() {
         LIMIT 1
     `).get();
 }
-
-// 函数 2：从特定文件夹（及其子文件夹，如果你想要的话）选一个
-function getRandomFromFolder(folderRelativePath) {
-    // 这里的 folderRelativePath 传入例如 "img/screenshots"
-    return db.prepare(`
-        SELECT * FROM files 
-        WHERE relative_dir = ? 
-        AND type = 'file' 
-        ORDER BY RANDOM() 
-        LIMIT 1
-    `).get(folderRelativePath);
-}
-export function getAllFilelist() {
-    const stmt = db.prepare('SELECT * FROM files');
-    return stmt.all();
-}
-
-/**
- * 清空 files 表的所有内容并重置自增 ID
- * @param {Object} db better-sqlite3 实例
- */
 function clearDatabase() {
     try {
         // 使用 BEGIN 和 COMMIT 包装以确保原子性（虽然单条语句自动包装，但养成好习惯）
@@ -122,4 +102,47 @@ function clearDatabase() {
         return false;
     }
 }
-export { db, initDatabase, saveToDatabase, flush, getRandomFromFolder, getRandomFromAll, clearDatabase };
+
+// 函数 2：从特定文件夹（及其子文件夹，如果你想要的话）选一个
+function getRandomFromFolder(folderRelativePath) {
+    // 这里的 folderRelativePath 传入例如 "img/screenshots"
+    return db.prepare(`
+        SELECT * FROM files 
+        WHERE relative_dir = ? 
+        AND type = 'file' 
+        ORDER BY RANDOM() 
+        LIMIT 1
+    `).get(folderRelativePath);
+}
+export function getAllFilelist() {
+    const stmt = db.prepare('SELECT * FROM files');
+    return stmt.all();
+}
+function getRateLimits() {
+    const stmt = db.prepare('SELECT * FROM hits');
+    return stmt.all();
+}
+function unbanIp(ip) {
+    try {
+        // 1. 如果你之前去掉了前缀，这里直接查 ip
+        // 2. 如果你保留了前缀 'limiter_'，这里需要拼接一下：const key = 'limiter_' + ip;
+        const key = ip;
+
+        const stmt = db.prepare('DELETE FROM hits WHERE key = ?;');
+        const result = stmt.run(key);
+        if (result.changes > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        logger.error({ err: error, ip }, 'Failed to unban IP');
+        return false;
+    }
+}
+
+/**
+ * 清空 files 表的所有内容并重置自增 ID
+ * @param {Object} db better-sqlite3 实例
+ */
+export { db, initDatabase, saveToDatabase, flush, getRandomFromFolder, getRandomFromAll, clearDatabase, getRateLimits, unbanIp };

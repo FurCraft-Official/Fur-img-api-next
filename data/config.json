@@ -1,6 +1,6 @@
 {
     "server": {
-        "addr": "localhost",
+        "addr": "0.0.0.0",
         "httpport": 3000,
         "httpsport": 3001,
         "forcehttps": false,

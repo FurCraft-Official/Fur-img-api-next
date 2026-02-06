@@ -2,7 +2,8 @@ import { app } from '../server.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import logger from '../../utils/loggerInstance.js';
-import { getAllFilelist } from '../../database/db.js';
+import { getAllFilelist, getRateLimits } from '../../database/db.js';
+import config from '../../utils/config.js';
 dayjs.extend(duration);
 
 async function routerStatus() {
@@ -70,6 +71,27 @@ async function routerStatus() {
         } catch (e) {
             logger.error({ err: e }, 'Get file list failed');
             res.status(500).json({ error: 'get files failed' });
+        }
+    });
+    app.use('/banlist', (req, res) => {
+        try {
+            const ratelist = getRateLimits();
+            const banlist = {};
+            for (const items of ratelist) {
+                if (items.totalHits > config.server.rateLimit.limit) {
+                    banlist.ip = items.key;
+                    banlist.totalHits = items.totalHits;
+                    banlist.resetTime = new Date(items.resetTime);
+                }
+            }
+            if (Object.keys(banlist).length === 0) {
+                logger.info('No banned IPs found');
+                return res.json({ message: 'no banned IPs' });
+            }
+            res.json(banlist);
+        } catch (e) {
+            logger.error({ err: e }, 'Failed to retrieve banlist');
+            res.status(500).json({ error: 'failed to retrieve banlist' });
         }
     });
 }
