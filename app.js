@@ -11,14 +11,14 @@ async function main() {
         // 初始化数据库
         const mydb = await initDatabase(config);
         mydb.pragma('journal_mode = WAL');
-        await clearDatabase(mydb);
+        await clearDatabase();
         await scanDirectory(config.paths.images, async (item) => {
-            await saveToDatabase(mydb, item);
+            await saveToDatabase(item);
         });
         flush(mydb);
         logger.info('Finished scanning: %s', config.paths.images);
         // 启动express服务器
-        startWebserver(config, mydb);
+        startWebserver(config);
     }
     catch (e) {
         logger.error({ err: e }, 'Error during scanning and saving to database');

@@ -5,10 +5,11 @@ import logger from '../utils/loggerInstance.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { createRoute } from './api.js';
+import { db } from '../database/db.js';
 const app = express();
 
 
-async function startWebserver(config, db) {
+async function startWebserver(config) {
     const createWebServer = (config) => {
         try {
             // 创建http服务器
@@ -33,9 +34,9 @@ async function startWebserver(config, db) {
         }
     };
     // 挂载路由
-    createRoute(db, config, app, express);
+    createRoute(config);
     // 创建web服务器
     createWebServer(config);
 }
 
-export { startWebserver };
+export { startWebserver, app };

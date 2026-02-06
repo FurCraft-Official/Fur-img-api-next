@@ -27,7 +27,7 @@ const JSON = (fileObj, baseScanPath) => {
         };
         return result;
     } catch (e) {
-        logger.error('', e);
+        logger.error({ err: e, path: fileObj.path }, 'Failed to parse JSON from file object');
     }
 };
 function requestLogger(req, res, next) {
@@ -36,7 +36,7 @@ function requestLogger(req, res, next) {
     res.on('finish', () => {
         const duration = Date.now() - start;
         const size = res.get('Content-Length') || 0;
-        logger.info(`${req.ip} ${req.url} ${req.method} ${res.statusCode} ${duration}ms ${size}bytes`);
+        logger.info({ ip: req.ip, method: req.method, url: req.url, statusCode: res.statusCode, duration: `${duration}ms`, size: `${size}bytes` }, 'Request completed');
     });
 
     next();

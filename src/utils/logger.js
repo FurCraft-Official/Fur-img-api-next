@@ -141,6 +141,7 @@ export async function initLogger(config = {}) {
                 colorize: true,
                 translateTime: 'yyyy-mm-dd HH:MM:ss',
                 ignore: 'pid,hostname',
+                singleLine: true,
                 messageFormat: '{msg}',
                 customColors: 'trace:gray,debug:blue,info:green,warn:yellow,error:red,fatal:bgRed',
                 errorLikeObjectKeys: ['err', 'error']

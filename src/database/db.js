@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import Database from 'better-sqlite3';
 import logger from '../utils/loggerInstance.js';
+import config from '../utils/config.js';
 
 let buffer = [];
 const BATCH_SIZE = 1000;
@@ -36,15 +37,15 @@ async function initDatabase(config) {
         logger.error({ err: e }, 'Failed to initialize database');
     }
 }
-
-async function saveToDatabase(db, item) {
+const db = await initDatabase(config);
+async function saveToDatabase(item) {
     buffer.push(item);
     if (buffer.length >= BATCH_SIZE) {
         flush(db);
     }
 }
 
-function flush(db) {
+function flush() {
     if (buffer.length === 0 || !db) return;
 
     try {
@@ -72,7 +73,7 @@ function flush(db) {
     }
 }
 
-function getRandomFromAll(db) {
+function getRandomFromAll() {
     return db.prepare(`
         SELECT * FROM files 
         WHERE type = 'file' 
@@ -82,7 +83,7 @@ function getRandomFromAll(db) {
 }
 
 // 函数 2：从特定文件夹（及其子文件夹，如果你想要的话）选一个
-function getRandomFromFolder(db, folderRelativePath) {
+function getRandomFromFolder(folderRelativePath) {
     // 这里的 folderRelativePath 传入例如 "img/screenshots"
     return db.prepare(`
         SELECT * FROM files 
@@ -92,7 +93,7 @@ function getRandomFromFolder(db, folderRelativePath) {
         LIMIT 1
     `).get(folderRelativePath);
 }
-export function getAllFilelist(db) {
+export function getAllFilelist() {
     const stmt = db.prepare('SELECT * FROM files');
     return stmt.all();
 }
@@ -101,7 +102,7 @@ export function getAllFilelist(db) {
  * 清空 files 表的所有内容并重置自增 ID
  * @param {Object} db better-sqlite3 实例
  */
-function clearDatabase(db) {
+function clearDatabase() {
     try {
         // 使用 BEGIN 和 COMMIT 包装以确保原子性（虽然单条语句自动包装，但养成好习惯）
         const deleteStmt = db.prepare('DELETE FROM files');
@@ -121,4 +122,4 @@ function clearDatabase(db) {
         return false;
     }
 }
-export { initDatabase, saveToDatabase, flush, getRandomFromFolder, getRandomFromAll, clearDatabase };
+export { db, initDatabase, saveToDatabase, flush, getRandomFromFolder, getRandomFromAll, clearDatabase };
