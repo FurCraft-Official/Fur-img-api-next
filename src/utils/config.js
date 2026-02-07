@@ -51,7 +51,7 @@ async function initConfig() {
             },
             'paths': {
                 'html': './public',
-                'images': './tupian'
+                'images': './img'
             },
             'admintoken': '114514'
 

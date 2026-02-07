@@ -98,11 +98,57 @@ npm install
 
 ### 启动服务
 
+**本地开发：**
 ```bash
 npm start
 ```
 
 服务将在 `http://localhost:3000` 启动。
+
+### Docker 部署
+
+#### 拉取镜像
+
+```bash
+docker pull fasfuah/fur-img-api_v3
+```
+
+#### 运行容器
+
+```bash
+docker run -d \
+  --name fur-img-api \
+  -p 3000:3000 \
+  -v /path/to/img:/app/img \
+  -v /path/to/ssl:/app/ssl \
+  -v /path/to/public:/app/public \
+  -v /path/to/data:/app/data \
+  fasfuah/fur-img-api_v3
+```
+
+**参数说明：**
+- `-d` - 后台运行容器
+- `--name fur-img-api` - 容器名称
+- `-p 3000:3000` - 端口映射（宿主机:容器）
+- `-v /path/to/img:/app/img` - 图片目录持久化卷
+- `-v /path/to/ssl:/app/ssl` - SSL证书目录持久化卷
+- `-v /path/to/public:/app/public` - 公共文件目录持久化卷
+- `-v /path/to/data:/app/data` - 挂载data目录
+
+**容器访问：**
+```bash
+# 查看日志
+docker logs -f fur-img-api
+
+# 停止容器
+docker stop fur-img-api
+
+# 重启容器
+docker restart fur-img-api
+
+# 删除容器
+docker rm fur-img-api
+```
 
 ## API 端点
 
