@@ -27,6 +27,11 @@ async function initDatabase(config) {
                 type TEXT
                 );
         `).run();
+            // 建议删除之前的单字段索引，改为这个
+            db.prepare(`
+                CREATE INDEX IF NOT EXISTS idx_files_dir_type 
+                ON files (relative_dir, type);
+        `).run();
             logger.info('Database created and initialized at %s', dbFile);
         } else {
             logger.info('Database file found at %s', dbFile);
