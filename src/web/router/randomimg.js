@@ -60,7 +60,7 @@ async function routerRandomIMG() {
 
     app.get('/api/*splat', (req, res) => {
         try {
-            const urlFolder = req.params.splat[0];
+            const urlFolder = req.params.splat.join('/');
             const file = getRandomFromFolder(urlFolder);
 
             if (!file) {

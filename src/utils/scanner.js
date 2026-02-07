@@ -1,5 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
+// 这里的关键：引入 posix 版本处理 URL 风格路径
+const posix = path.posix;
 import logger from './loggerInstance.js';
 
 export const scanDirectory = async (fullPath, callback, rootPath = fullPath) => {
@@ -9,20 +11,24 @@ export const scanDirectory = async (fullPath, callback, rootPath = fullPath) => 
 
         for await (const dirent of dir) {
             const itemPath = path.join(resolvedPath, dirent.name);
-            const relativePath = path.relative(path.resolve(rootPath), itemPath);
 
-            // 获取文件所在目录的相对路径
-            // 如果是文件：返回其父目录的相对路径
-            // 如果是目录：返回其自身的相对路径
-            const relativeDir = dirent.isDirectory()
+            // 1. 先用原生 path 计算出当前系统的相对路径
+            const rel = path.relative(path.resolve(rootPath), itemPath);
+
+            // 2. 核心修正：如果是 Windows，把 \ 统一换成 /
+            // path.sep 在 Windows 是 \，在 Linux 是 /
+            const relativePath = rel.split(path.sep).join('/');
+
+            // 3. 使用 posix 逻辑处理目录名，确保结果永远是 /
+            const relativeDirRaw = dirent.isDirectory()
                 ? relativePath
-                : path.dirname(relativePath);
+                : posix.dirname(relativePath);
 
             const item = {
                 file: dirent.name,
-                path: itemPath,
-                relativePath: relativePath,
-                relativeDir: relativeDir === '.' ? '' : relativeDir, // 如果是根目录，设为空字符串或 '.'
+                path: itemPath, // 绝对路径保留系统原生格式，方便 fs 读取
+                relativePath: relativePath, // 已转换为 /
+                relativeDir: relativeDirRaw === '.' ? '' : relativeDirRaw,
                 type: dirent.isDirectory() ? 'directory' : 'file'
             };
 
