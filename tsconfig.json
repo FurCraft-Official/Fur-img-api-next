@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        /* 基础环境 */
+        "target": "ESNext", /* 你的 Node 版本 >= 18.18，支持最新语法 */
+        "module": "NodeNext", /* 关键：完美适配现代 ESM 导入模式 */
+        "moduleResolution": "NodeNext", /* 配合 NodeNext，能自动找到 @types 里的定义 */
+        "lib": [
+            "ESNext"
+        ],
+        "outDir": "./dist", /* 编译后的 JS 存放在这里 */
+        "rootDir": "./", /* 源代码放在 src 下 */
+        /* 模块导入黑科技 */
+        "esModuleInterop": true, /* 允许像 import express from 'express' 这样导入 CommonJS 包 */
+        "forceConsistentCasingInFileNames": true, /* 强制文件名大小写一致，防止 Linux 上报错 */
+        "skipLibCheck": true, /* 跳过 node_modules 里的库类型检查，加快编译速度 */
+        "resolveJsonModule": true, /* 允许直接导入 .json 文件，方便读取你的 config.json */
+        /* 迁移友好的严格性设置 */
+        "strict": true, /* 开启严格模式，TS 的灵魂 */
+        "noImplicitAny": false, /* 【迁移神器】允许隐式的 any。如果你没写类型，TS 不会直接报错，只会给你个警告。等你以后手感顺了再把它改成 true */
+        "strictNullChecks": true, /* 检查 null/undefined，防止程序崩溃 */
+        /* 路径处理 */
+        "baseUrl": ".",
+        "sourceMap": true, /* 调试利器：报错时能定位到你的 .ts 源码而不是 .js */
+        "removeComments": true, /* 编译后删除注释，减小体积 */
+    },
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*.spec.ts"
+    ]
+}

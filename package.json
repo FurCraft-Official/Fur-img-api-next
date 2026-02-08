@@ -12,6 +12,11 @@
   "license": "GPL-3.0-only",
   "description": "一个基于 Node.js/Express 的图片文件 API 服务，提供返回随机图片和完整文件外放功能",
   "dependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/eslint": "^9.6.1",
+    "@types/mime-types": "^3.0.1",
     "better-sqlite3": "^12.6.2",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
@@ -31,7 +36,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.2",
     "eslint": "^9.39.2",
-    "globals": "^17.3.0"
+    "globals": "^17.3.0",
+    "typescript": "^5.9.3"
   }
 }

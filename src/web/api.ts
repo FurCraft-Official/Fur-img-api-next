@@ -5,6 +5,7 @@ import { routerRandomIMG } from './router/randomimg.js';
 import { app } from './server.js';
 import { routerStatus } from './router/status.js';
 import { rouerMiddlewares } from './router/routermiddleware.js';
+import { Request, Response, NextFunction } from 'express'
 
 
 async function createRoute() {
@@ -17,7 +18,7 @@ async function createRoute() {
 
 
     // 全局异常捕获 (Express 5)
-    app.use((err, req, res, next) => {
+    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         logger.error({ err }, 'Server error');
         if (!res.headersSent) {
             res.status(500).json({ error: 'Internal server error' });

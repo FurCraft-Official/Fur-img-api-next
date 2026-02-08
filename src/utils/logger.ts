@@ -1,13 +1,14 @@
 import pino from 'pino';
 import pretty from 'pino-pretty';
 import fs from 'fs-extra';
+import { AppConfig, LogFileEntry } from '../types/index.js';
 import { join } from 'path';
 import dayjs from 'dayjs';
 
 // 强制开启颜色显示，解决 Windows 环境下颜色对不上的问题
 process.env.FORCE_COLOR = '1';
 
-const LOG_LEVELS = {
+const LOG_LEVELS: Record<number, string> = {
     0: 'silent',
     1: 'fatal',
     2: 'error',
@@ -18,11 +19,12 @@ const LOG_LEVELS = {
 };
 
 class FileStream {
-    constructor(filePath) {
+    [key: string]: any
+    constructor(filePath: string) {
         this.stream = fs.createWriteStream(filePath, { flags: 'a' });
     }
 
-    write(msg) {
+    write(msg: string) {
         try {
             const log = JSON.parse(msg);
             const timestamp = `[${dayjs(log.time).format('YYYY-MM-DD HH:mm:ss')}]`;
@@ -51,8 +53,8 @@ class FileStream {
         }
     }
 
-    formatLevel(levelNumber) {
-        const levels = {
+    formatLevel(levelNumber: number): string {
+        const levels: Record<number, string> = {
             10: '[trace]',
             20: '[debug]',
             30: '[info] ',
@@ -65,7 +67,7 @@ class FileStream {
 }
 
 // 检查单个文件大小，超过则重命名归档
-async function checkAndRotateSize(filePath, maxSizeMB) {
+async function checkAndRotateSize(filePath: string, maxSizeMB: number) {
     if (!maxSizeMB || maxSizeMB <= 0) return;
     try {
         if (await fs.pathExists(filePath)) {
@@ -82,42 +84,45 @@ async function checkAndRotateSize(filePath, maxSizeMB) {
     }
 }
 
-async function rotateOldLogs(logPath, maxFiles) {
+async function rotateOldLogs(logPath: string, maxFiles: number): Promise<void> {
     try {
-        const files = await fs.readdir(logPath);
-        const logFiles = files
-            .filter(f => (f.startsWith('app-') && f.endsWith('.log')) || f.endsWith('.bak'))
-            .map(f => ({
+        const files: string[] = await fs.readdir(logPath);
+
+        const logFiles: LogFileEntry[] = files
+            .filter((f: string) => (f.startsWith('app-') && f.endsWith('.log')) || f.endsWith('.bak'))
+            .map((f: string): LogFileEntry => ({
                 name: f,
                 path: join(logPath, f),
+                // 如果对性能有追求，建议这里改用 await fs.stat()
                 time: fs.statSync(join(logPath, f)).mtime.getTime()
             }))
-            .sort((a, b) => b.time - a.time);
+            .sort((a: LogFileEntry, b: LogFileEntry) => b.time - a.time);
 
         if (logFiles.length > maxFiles) {
             const filesToDelete = logFiles.slice(maxFiles);
             for (const file of filesToDelete) {
+                // file 现在有完美的类型提示了
                 await fs.remove(file.path);
             }
         }
     } catch (err) {
-        console.error('Failed to rotate logs by count:', err);
+        // 在 TS 中 err 默认为 unknown，这里转一下
+        const error = err as Error;
+        console.error('Failed to rotate logs by count:', error.message);
     }
 }
 
-let loggerInstance = null;
+let loggerInstance: ReturnType<typeof pino>;
 
-export async function initLogger(config = {}) {
+export async function initLogger(config: AppConfig) {
     const logLevel = LOG_LEVELS[config.log?.level ?? 4] || 'info';
     const logPath = config.log?.path || './logs';
     const enableConsole = config.log?.console !== false;
     const enableFile = config.log?.file !== false;
     const maxFiles = config.log?.maxFiles || 7;
     const maxSize = config.log?.maxSize || 10; // 默认 10MB
-
+    const streams: any[] = [];
     await fs.ensureDir(logPath);
-
-    const streams = [];
 
     if (enableFile) {
         const logFileName = `app-${dayjs().format('YYYY-MM-DD')}.log`;

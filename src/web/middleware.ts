@@ -1,12 +1,14 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { Request, Response, NextFunction } from 'express'
 import logger from '../utils/loggerInstance.js';
 import dayjs from 'dayjs';
 import config from '../utils/config.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import { fileObj } from '../types/index.js';
 dayjs.extend(customParseFormat);
 
-const formatFileInfo = (fileObj, baseScanPath) => {
+const formatFileInfo = (fileObj: fileObj, baseScanPath: string) => {
     try {
         const absolutePath = path.resolve(fileObj.path);
         const stats = fs.statSync(absolutePath);
@@ -30,7 +32,7 @@ const formatFileInfo = (fileObj, baseScanPath) => {
         logger.error({ err: e, path: fileObj.path }, 'Failed to parse JSON from file object');
     }
 };
-function requestLogger(req, res, next) {
+function requestLogger(req: Request, res: Response, next: NextFunction) {
     const start = Date.now();
 
     res.on('finish', () => {
@@ -41,7 +43,7 @@ function requestLogger(req, res, next) {
 
     next();
 }
-function authMiddleware(req, res, next) {
+function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const adminToken = config.admintoken;
     const clientToken = req.query.token;
 

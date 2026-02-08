@@ -1,5 +1,5 @@
 // eslint.config.js (ESLint 9+ 扁平化配置)
-import js from '@eslint/js';
+import js from '@eslint/ts';
 import globals from 'globals';
 
 export default [

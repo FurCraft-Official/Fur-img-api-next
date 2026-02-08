@@ -5,11 +5,12 @@ import logger from '../utils/loggerInstance.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { createRoute } from './api.js';
+import { AppConfig } from '../types/index.js';
 const app = express();
 
 
-async function startWebserver(config) {
-    const createWebServer = (config) => {
+async function startWebserver(config: AppConfig) {
+    const createWebServer = (config: AppConfig) => {
         try {
             // 创建http服务器
             const httpserver = http.createServer(app);
@@ -33,7 +34,7 @@ async function startWebserver(config) {
         }
     };
     // 挂载路由
-    createRoute(config);
+    createRoute();
     // 创建web服务器
     createWebServer(config);
 }
