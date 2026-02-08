@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 安装依赖 (使用 clean install 保证环境纯净)
-RUN npm install --omit=dev
+RUN npm install --production --omit=dev
 RUN mkdir -p img ssl public
 # 拷贝源代码
 COPY . .
