@@ -1,4 +1,4 @@
-# Fur-Img-API_V3
+# Fur-img-api-next
 
 一个基于 Node.js 和 Express 的高性能图片/文件服务 API，提供目录扫描、数据库存储、随机文件提取和完整文件外放功能。
 
@@ -133,7 +133,7 @@ npm start
 #### 拉取镜像
 
 ```bash
-docker pull fasfuah/fur-img-api_v3
+docker pull fasfuah/fur-img-api-next
 ```
 
 #### 运行容器
@@ -146,7 +146,7 @@ docker run -d \
   -v /path/to/ssl:/app/ssl \
   -v /path/to/public:/app/public \
   -v /path/to/data:/app/data \
-  fasfuah/fur-img-api_v3
+  fasfuah/fur-img-api-next
 ```
 
 **参数说明：**
