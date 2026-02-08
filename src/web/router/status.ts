@@ -6,8 +6,13 @@ import { getAllFilelist, getRateLimits } from '../../database/db.js';
 import config from '../../utils/config.js';
 import { banlistObj, fileObj } from '../../types/index.js';
 dayjs.extend(duration);
-
-
+/**
+ * 注册状态和列表路由
+ * GET /health - 获取服务器健康状态、内存使用、运行时长等信息
+ * GET /filelist - 获取所有 CRUD 文件列表，按目录组织
+ * GET /banlist - 获取被速率限制封禁的 IP 列表
+ * @returns {Promise<void>} 异步操作完成后返回
+ **/
 async function routerStatus() {
     app.get('/health', (req, res) => {
         try {
@@ -100,3 +105,6 @@ async function routerStatus() {
 }
 
 export { routerStatus };
+/**
+ * 导出状态和列表路由函数
+ */

@@ -1,3 +1,7 @@
+/**
+ * 应用配置接口
+ * 定义了服务器、数据库、日志和路径的所有配置选项
+ */
 export interface AppConfig {
     server: {
         addr: string;
@@ -50,6 +54,10 @@ export interface AppConfig {
     admintoken: string;
 }
 
+/**
+ * 扫描对象接口
+ * 表示文件系统扫描过程中的单个文件或目录项
+ */
 export interface scanObj {
     file: string
     path: string
@@ -58,6 +66,10 @@ export interface scanObj {
     type: string
 }
 
+/**
+ * 文件对象接口
+ * 表示存储在数据库中的文件记录
+ */
 export interface fileObj {
     file: string
     id: number
@@ -67,12 +79,20 @@ export interface fileObj {
     type: string
 }
 
+/**
+ * 封禁列表对象接口
+ * 表示速率限制中被封禁的 IP 地址信息
+ */
 export interface banlistObj {
     ip: string
     totalHits: number
     resetTime: Date
 }
 
+/**
+ * 日志文件条目接口
+ * 用于日志轮转和管理
+ */
 interface LogFileEntry {
     name: string;
     path: string;

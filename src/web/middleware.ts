@@ -1,3 +1,8 @@
+/**
+ * 中间件模块
+ * 提供请求日志、身份验证、文件信息格式化等中间件功能
+ */
+
 import fs from 'fs-extra';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
@@ -8,6 +13,14 @@ import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import { fileObj } from '../types/index.js';
 dayjs.extend(customParseFormat);
 
+/**
+ * 格式化文件信息
+ * 将数据库中的文件对象转换为 API 响应格式
+ * 计算文件大小、修改时间，生成可访问的 URL
+ * @param {fileObj} fileObj - 数据库中的文件对象
+ * @param {string} baseScanPath - 基础扫描路径，用于计算相对 URL
+ * @returns {Object} 格式化后的文件信息对象，包含 id、name、size、mtime、url
+ */
 const formatFileInfo = (fileObj: fileObj, baseScanPath: string) => {
     try {
         const absolutePath = path.resolve(fileObj.path);

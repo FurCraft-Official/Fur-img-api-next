@@ -1,3 +1,8 @@
+/**
+ * 主应用入口文件
+ * 负责初始化数据库、扫描目录并启动 Web 服务器
+ */
+
 // import fs from 'fs-extra';
 // import path from 'path';
 import { scanDirectory } from './src/utils/scanner.js';
@@ -7,6 +12,12 @@ import { saveToDatabase, flush, clearDatabase, db } from './src/database/db.js';
 import { startWebserver } from './src/web/server.js';
 import { scanObj } from './src/types/index.js';
 
+/**
+ * 主函数
+ * 初始化数据库、扫描图片目录、保存到数据库、启动 Web 服务器
+ * @returns {Promise<void>} 异步操作完成后返回
+ * @throws {Error} 扫描或保存过程中出错时抛出异常
+ */
 async function main(): Promise<void> {
     try {
         // 初始化数据库

@@ -1,3 +1,9 @@
+/**
+ * 日志模块
+ * 基于 pino 的高性能日志系统
+ * 支持控制台输出和文件输出，支持日志轮转和大小限制
+ */
+
 import pino from 'pino';
 import pretty from 'pino-pretty';
 import fs from 'fs-extra';
@@ -18,12 +24,26 @@ const LOG_LEVELS: Record<number, string> = {
     6: 'trace'
 };
 
+/**
+ * 文件流类
+ * 自定义的日志文件流，格式化日志输出
+ */
 class FileStream {
     [key: string]: any
+    /**
+     * 构造函数
+     * @param {string} filePath - 日志文件路径
+     */
     constructor(filePath: string) {
         this.stream = fs.createWriteStream(filePath, { flags: 'a' });
     }
 
+    /**
+     * 写入日志到文件
+     * 解析 JSON 格式的日志消息并格式化输出
+     * @param {string} msg - 日志消息
+     * @returns {void}
+     */
     write(msg: string) {
         try {
             const log = JSON.parse(msg);
@@ -53,6 +73,12 @@ class FileStream {
         }
     }
 
+    /**
+     * 格式化日志级别
+     * 将数字日志级别转换为字符串表示
+     * @param {number} levelNumber - 日志级别数字
+     * @returns {string} 格式化后的日志级别字符串
+     */
     formatLevel(levelNumber: number): string {
         const levels: Record<number, string> = {
             10: '[trace]',
@@ -67,6 +93,13 @@ class FileStream {
 }
 
 // 检查单个文件大小，超过则重命名归档
+/**
+ * 检查并轮转日志文件（按大小）
+ * 如果日志文件超过指定大小，将其重命名为备份文件
+ * @param {string} filePath - 日志文件路径
+ * @param {number} maxSizeMB - 最大文件大小（单位：MB）
+ * @returns {Promise<void>} 异步操作完成后返回
+ */
 async function checkAndRotateSize(filePath: string, maxSizeMB: number) {
     if (!maxSizeMB || maxSizeMB <= 0) return;
     try {
@@ -84,6 +117,13 @@ async function checkAndRotateSize(filePath: string, maxSizeMB: number) {
     }
 }
 
+/**
+ * 轮转旧日志文件
+ * 删除超过最大文件数限制的最旧日志
+ * @param {string} logPath - 日志目录路径
+ * @param {number} maxFiles - 保留的最大日志文件数
+ * @returns {Promise<void>} 异步操作完成后返回
+ */
 async function rotateOldLogs(logPath: string, maxFiles: number): Promise<void> {
     try {
         const files: string[] = await fs.readdir(logPath);
@@ -114,6 +154,12 @@ async function rotateOldLogs(logPath: string, maxFiles: number): Promise<void> {
 
 let loggerInstance: ReturnType<typeof pino>;
 
+/**
+ * 初始化日志系统
+ * 配置控制台和文件输出流，设置日志级别和轮转策略
+ * @param {AppConfig} config - 应用配置对象
+ * @returns {Promise<ReturnType<typeof pino>>} 返回初始化后的 pino 日志实例
+ */
 export async function initLogger(config: AppConfig) {
     const logLevel = LOG_LEVELS[config.log?.level ?? 4] || 'info';
     const logPath = config.log?.path || './logs';
@@ -170,6 +216,11 @@ export async function initLogger(config: AppConfig) {
     return loggerInstance;
 }
 
+/**
+ * 获取日志实例
+ * 返回全局日志记录器实例
+ * @returns {ReturnType<typeof pino>} 返回 pino 日志实例
+ */
 export function getLogger() {
     if (!loggerInstance) {
         return pino({ level: 'info' });

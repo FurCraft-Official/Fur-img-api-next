@@ -1,3 +1,9 @@
+/**
+ * 随机图片 API 路由
+ * 提供随机图片接口，支持从所有图片或指定文件夹中随机返回
+ * 支持 JSON 格式返回和文件流传输
+ */
+
 import logger from '../../utils/loggerInstance.js';
 import config from '../../utils/config.js';
 import fs from 'fs-extra';
@@ -8,6 +14,14 @@ import { formatFileInfo } from '../middleware.js';
 import mime from 'mime-types';
 import { fileObj } from '../../types/index.js';
 
+/**
+ * 注册随机图片路由
+ * 设置 GET /api 和 GET /api/* 路由
+ * GET /api - 从所有图片中随机返回一张
+ * GET /api/* - 从指定文件夹中随机返回一张
+ * 支持 ?json=true 参数返回 JSON 格式而不是文件流
+ * @returns {Promise<void>} 异步操作完成后返回
+ */
 async function routerRandomIMG() {
     app.get('/api', (req, res) => {
         try {
@@ -115,3 +129,6 @@ async function routerRandomIMG() {
 }
 
 export { routerRandomIMG };
+/**
+ * 导出随机图片路由函数
+ */

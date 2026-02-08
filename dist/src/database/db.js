@@ -74,7 +74,7 @@ function getRandomFromAll() {
 function clearDatabase() {
     try {
         const deleteStmt = db.prepare('DELETE FROM files');
-        const resetCursor = db.prepare("DELETE FROM sqlite_sequence WHERE name = 'files'");
+        const resetCursor = db.prepare('DELETE FROM sqlite_sequence WHERE name = \'files\'');
         const transaction = db.transaction(() => {
             deleteStmt.run();
             resetCursor.run();
@@ -125,7 +125,7 @@ function unbanIp(ip) {
 async function getDB() {
     const db = await initDatabase(config);
     if (!db)
-        throw new Error("Database not initialized!");
+        throw new Error('Database not initialized!');
     return db;
 }
 const db = await getDB();

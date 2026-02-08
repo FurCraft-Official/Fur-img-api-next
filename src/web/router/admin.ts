@@ -1,3 +1,9 @@
+/**
+ * 管理员路由模块
+ * 提供各种管理功能，如数据库刷新、IP 解封等
+ * 所有路由都需要管理员身份验证
+ */
+
 import { app } from '../server.js';
 import { authMiddleware } from '../middleware.js';
 import { clearDatabase, flush, saveToDatabase, unbanIp } from '../../database/db.js';
@@ -5,6 +11,12 @@ import { scanDirectory } from '../../utils/scanner.js';
 import logger from '../../utils/loggerInstance.js';
 import config from '../../utils/config.js';
 
+/**
+ * 注册管理员路由
+ * POST /admin/refresh - 重新扫描图片目录并刷新数据库
+ * POST /admin/unban/:ip - 解封指定 IP 地址
+ * @returns {Promise<void>} 异步操作完成后返回
+ */
 async function routerAdmin() {
     app.post('/admin/refresh', authMiddleware, async (req, res) => {
         try {
@@ -39,3 +51,6 @@ async function routerAdmin() {
 }
 
 export { routerAdmin };
+/**
+ * 导出管理员路由函数
+ */
