@@ -1,3 +1,5 @@
+##旧的JavaScript分支
+
 # Fur-Img-API_V3
 
 一个基于 Node.js 和 Express 的高性能图片/文件服务 API，提供目录扫描、数据库存储、随机文件提取和完整文件外放功能。
