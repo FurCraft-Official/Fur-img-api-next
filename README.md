@@ -93,7 +93,7 @@ npm install
     "html": "./public",             // 静态网站文件目录
     "images": "./tupian"            // 图片/文件目录
   },
-  "admintoken": "114514"            // 管理员 Token
+  "admintoken": "114514"            // 管理员 Token,请不要使用默认Token
 }
 ```
 
