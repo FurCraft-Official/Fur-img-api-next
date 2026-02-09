@@ -38,6 +38,7 @@ async function main(): Promise<void> {
 await main();
 process.on('uncaughtException', (err): void => {
     logger.error({ err }, 'Uncaught exception');
+    process.exit(1);
 });
 
 process.on('SIGINT', (): void => {
