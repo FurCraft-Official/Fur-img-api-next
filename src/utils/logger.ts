@@ -100,7 +100,7 @@ class FileStream {
  * @param {number} maxSizeMB - 最大文件大小（单位：MB）
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function checkAndRotateSize(filePath: string, maxSizeMB: number) {
+async function checkAndRotateSize(filePath: string, maxSizeMB: number): Promise<void> {
     if (!maxSizeMB || maxSizeMB <= 0) return;
     try {
         if (await fs.pathExists(filePath)) {

@@ -18,10 +18,10 @@ const BATCH_SIZE = 1000;
  * 初始化数据库
  * 创建数据库文件、建立表结构和索引
  * @param {AppConfig} config - 应用配置对象
- * @returns {Promise<Database.Database|undefined>} 返回 better-sqlite3 数据库实例或 undefined
+ * @returns {Promise<Database.Database>} 返回 better-sqlite3 数据库实例或 undefined
  * @throws {Error} 数据库初始化失败时捕获并记录错误
  */
-async function initDatabase(config: AppConfig) {
+async function initDatabase(config: AppConfig): Promise<Database.Database> {
     try {
         const dbFile = path.resolve(config.db.sqlite3.file);
         const fileExists = fs.existsSync(dbFile);
@@ -51,10 +51,14 @@ async function initDatabase(config: AppConfig) {
             logger.info('Database file found at %s', dbFile);
             // 可选：如果表已存在但没有新字段，可以执行 ALTER TABLE 语句
         }
+        if (!db) {
+            throw new Error;
+        }
 
         return db;
     } catch (e) {
         logger.error({ err: e }, 'Failed to initialize database');
+        process.exit(1);
     }
 }
 /**
@@ -63,7 +67,7 @@ async function initDatabase(config: AppConfig) {
  * @param {scanObj} item - 要保存的扫描对象
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function saveToDatabase(item: scanObj) {
+async function saveToDatabase(item: scanObj): Promise<void> {
     buffer.push(item);
     if (buffer.length >= BATCH_SIZE) {
         flush();
@@ -75,7 +79,7 @@ async function saveToDatabase(item: scanObj) {
  * 使用事务确保数据一致性
  * @returns {void}
  */
-function flush() {
+function flush(): void {
     if (buffer.length === 0 || !db) return;
 
     try {
@@ -107,7 +111,7 @@ function flush() {
  * 从所有文件中随机获取一个
  * @returns {any} 返回随机的文件记录
  */
-function getRandomFromAll() {
+function getRandomFromAll(): any {
     return db.prepare(`
             SELECT * FROM files 
             WHERE type = 'file' 
@@ -119,7 +123,7 @@ function getRandomFromAll() {
  * 清空数据库中的所有文件记录并重置自增 ID
  * @returns {boolean} 清空成功返回 true，失败返回 false
  */
-function clearDatabase() {
+function clearDatabase(): boolean {
     try {
         // 使用 BEGIN 和 COMMIT 包装以确保原子性（虽然单条语句自动包装，但养成好习惯）
         const deleteStmt = db.prepare('DELETE FROM files');
@@ -160,7 +164,7 @@ function getRandomFromFolder(folderRelativePath: string) {
  * 获取数据库中的所有文件列表
  * @returns {any[]} 返回所有文件记录数组
  */
-export function getAllFilelist() {
+export function getAllFilelist(): any {
     const stmt = db.prepare('SELECT * FROM files');
     return stmt.all();
 }
@@ -168,7 +172,7 @@ export function getAllFilelist() {
  * 获取所有速率限制记录
  * @returns {any[]} 返回所有 hits 表的记录
  */
-function getRateLimits() {
+function getRateLimits(): any {
     const stmt = db.prepare('SELECT * FROM hits');
     return stmt.all();
 }
@@ -178,7 +182,7 @@ function getRateLimits() {
  * @param {string} ip - 要解禁的 IP 地址
  * @returns {boolean} 解禁成功返回 true，失败返回 false
  */
-function unbanIp(ip: string) {
+function unbanIp(ip: string): boolean {
     try {
         // 1. 如果你之前去掉了前缀，这里直接查 ip
         // 2. 如果你保留了前缀 'limiter_'，这里需要拼接一下：const key = 'limiter_' + ip;
@@ -207,7 +211,7 @@ function unbanIp(ip: string) {
  * @returns {Promise<Database.Database>} 返回初始化后的数据库实例
  * @throws {Error} 如果数据库未能正确初始化，抛出异常
  */
-async function getDB() {
+async function getDB(): Promise<Database.Database> {
     const db = await initDatabase(config);
     if (!db) throw new Error('Database not initialized!');
     return db as Database.Database;
