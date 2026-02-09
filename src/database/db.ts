@@ -10,7 +10,6 @@ import Database from 'better-sqlite3';
 import logger from '../utils/loggerInstance.js';
 import config from '../utils/config.js';
 import { AppConfig, scanObj } from '../types/index.js';
-import e from 'express';
 
 let buffer: scanObj[] = [];
 const BATCH_SIZE = 1000;
