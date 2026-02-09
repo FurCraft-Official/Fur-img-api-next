@@ -21,6 +21,7 @@ async function main() {
 await main();
 process.on('uncaughtException', (err) => {
     logger.error({ err }, 'Uncaught exception');
+    process.exit(1);
 });
 process.on('SIGINT', () => {
     logger.info('process exit');

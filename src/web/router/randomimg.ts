@@ -52,7 +52,7 @@ async function routerRandomIMG(): Promise<void> {
 
             res.setHeader('Content-Length', fileSize);
             res.setHeader('Content-Type', mimeType);
-            res.setHeader('Cache-Control', 'public, max-age=60');
+            res.setHeader('Cache-Control', 'public, max-age=0');
 
             // 创建可读流并传输
             const fileStream = fs.createReadStream(filePath);
@@ -105,7 +105,7 @@ async function routerRandomIMG(): Promise<void> {
 
             res.setHeader('Content-Length', fileSize);
             res.setHeader('Content-Type', mimeType);
-            res.setHeader('Cache-Control', 'public, max-age=60');
+            res.setHeader('Cache-Control', 'public, max-age=0');
 
             // 创建可读流并传输
             const fileStream = fs.createReadStream(filePath);

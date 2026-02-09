@@ -27,7 +27,7 @@ async function routerRandomIMG() {
             const mimeType = mime.lookup(file.file) || 'application/octet-stream';
             res.setHeader('Content-Length', fileSize);
             res.setHeader('Content-Type', mimeType);
-            res.setHeader('Cache-Control', 'public, max-age=60');
+            res.setHeader('Cache-Control', 'public, max-age=0');
             const fileStream = fs.createReadStream(filePath);
             fileStream.pipe(res);
             fileStream.on('error', (err) => {
@@ -65,7 +65,7 @@ async function routerRandomIMG() {
             const mimeType = mime.lookup(file.file) || 'application/octet-stream';
             res.setHeader('Content-Length', fileSize);
             res.setHeader('Content-Type', mimeType);
-            res.setHeader('Cache-Control', 'public, max-age=60');
+            res.setHeader('Cache-Control', 'public, max-age=0');
             const fileStream = fs.createReadStream(filePath);
             fileStream.pipe(res);
             fileStream.on('error', (err) => {
