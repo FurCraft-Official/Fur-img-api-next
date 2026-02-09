@@ -30,10 +30,14 @@ async function initDatabase(config) {
         else {
             logger.info('Database file found at %s', dbFile);
         }
+        if (!db) {
+            throw new Error;
+        }
         return db;
     }
     catch (e) {
         logger.error({ err: e }, 'Failed to initialize database');
+        process.exit(1);
     }
 }
 async function saveToDatabase(item) {
@@ -123,10 +127,16 @@ function unbanIp(ip) {
     }
 }
 async function getDB() {
-    const db = await initDatabase(config);
-    if (!db)
-        throw new Error('Database not initialized!');
-    return db;
+    try {
+        const db = await initDatabase(config);
+        if (!db)
+            throw new Error('Database not initialized!');
+        return db;
+    }
+    catch (err) {
+        logger.error(err);
+        process.exit(1);
+    }
 }
 const db = await getDB();
 export { db, initDatabase, saveToDatabase, flush, getRandomFromFolder, getRandomFromAll, clearDatabase, getRateLimits, unbanIp };
