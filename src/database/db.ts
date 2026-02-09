@@ -10,6 +10,7 @@ import Database from 'better-sqlite3';
 import logger from '../utils/loggerInstance.js';
 import config from '../utils/config.js';
 import { AppConfig, scanObj } from '../types/index.js';
+import e from 'express';
 
 let buffer: scanObj[] = [];
 const BATCH_SIZE = 1000;
@@ -150,7 +151,7 @@ function clearDatabase(): boolean {
  * @param {string} folderRelativePath - 相对路径，例如 "img/screenshots"
  * @returns {any} 返回指定文件夹中的随机文件记录
  */
-function getRandomFromFolder(folderRelativePath: string) {
+function getRandomFromFolder(folderRelativePath: string): any {
     // 这里的 folderRelativePath 传入例如 "img/screenshots"
     return db.prepare(`
                 SELECT * FROM files 
@@ -212,9 +213,14 @@ function unbanIp(ip: string): boolean {
  * @throws {Error} 如果数据库未能正确初始化，抛出异常
  */
 async function getDB(): Promise<Database.Database> {
-    const db = await initDatabase(config);
-    if (!db) throw new Error('Database not initialized!');
-    return db as Database.Database;
+    try {
+        const db = await initDatabase(config);
+        if (!db) throw new Error('Database not initialized!');
+        return db as Database.Database;
+    } catch (err) {
+        logger.error(err);
+        process.exit(1);
+    }
 }
 const db = await getDB();
 export { db, initDatabase, saveToDatabase, flush, getRandomFromFolder, getRandomFromAll, clearDatabase, getRateLimits, unbanIp };
