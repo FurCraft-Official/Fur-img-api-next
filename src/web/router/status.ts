@@ -13,7 +13,7 @@ dayjs.extend(duration);
  * GET /banlist - 获取被速率限制封禁的 IP 列表
  * @returns {Promise<void>} 异步操作完成后返回
  **/
-async function routerStatus() {
+async function routerStatus(): Promise<void> {
     app.get('/health', (req, res) => {
         try {
             const memoryUsage = process.memoryUsage();

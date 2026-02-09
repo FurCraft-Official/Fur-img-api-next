@@ -20,7 +20,7 @@ import { Request, Response, NextFunction } from 'express';
  * 设置全局异常捕获和 404 处理
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function createRoute() {
+async function createRoute(): Promise<void> {
     app.set('trust proxy', 'loopback');
     rouerMiddlewares();
     routerRandomIMG();

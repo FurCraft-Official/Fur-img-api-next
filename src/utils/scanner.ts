@@ -21,7 +21,7 @@ import { scanObj } from '../types/index.js';
  * @returns {Promise<void>} 扫描完成后返回
  * @throws {Error} 扫描过程中的错误会被捕获并记录
  */
-export const scanDirectory = async (fullPath: string, callback: (item: scanObj) => Promise<void>, rootPath = fullPath) => {
+export const scanDirectory = async (fullPath: string, callback: (item: scanObj) => Promise<void>, rootPath = fullPath): Promise<void> => {
     try {
         const resolvedPath = path.resolve(fullPath);
         const dir = await fs.opendir(resolvedPath, { withFileTypes: true });

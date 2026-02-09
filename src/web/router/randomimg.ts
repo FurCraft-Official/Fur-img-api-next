@@ -22,7 +22,7 @@ import { fileObj } from '../../types/index.js';
  * 支持 ?json=true 参数返回 JSON 格式而不是文件流
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function routerRandomIMG() {
+async function routerRandomIMG(): Promise<void> {
     app.get('/api', (req, res) => {
         try {
             const filedata = getRandomFromAll();

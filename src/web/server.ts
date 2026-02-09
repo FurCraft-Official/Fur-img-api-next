@@ -20,7 +20,7 @@ const app = express();
  * @param {AppConfig} config - 应用配置对象
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function startWebserver(config: AppConfig) {
+async function startWebserver(config: AppConfig): Promise<void> {
     /**
      * 创建 Web 服务器
      * 根据配置创建 HTTP 服务器，可选创建 HTTPS 服务器
@@ -28,7 +28,7 @@ async function startWebserver(config: AppConfig) {
      * @returns {void}
      * @throws {Error} 服务器启动失败时退出进程
      */
-    const createWebServer = (config: AppConfig) => {
+    const createWebServer = (config: AppConfig): void => {
         try {
             // 创建http服务器
             const httpserver = http.createServer(app);

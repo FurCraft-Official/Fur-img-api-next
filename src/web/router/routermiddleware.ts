@@ -6,7 +6,7 @@ import { SqliteStore } from 'rate-limit-sqlite';
 import { app } from '../server.js';
 import { requestLogger } from '../middleware.js';
 
-async function rouerMiddlewares() {
+async function rouerMiddlewares(): Promise<void> {
     if (config.server.cors.enable) {
         // 启用cors中间件
         const corsConfig = {

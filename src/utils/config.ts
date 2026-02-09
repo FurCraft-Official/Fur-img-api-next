@@ -6,13 +6,14 @@
 
 import fs from 'fs-extra';
 import path from 'path';
+import { AppConfig } from 'src/types/index.js';
 
 /**
  * 初始化配置
  * 检查配置文件是否存在，如果不存在则创建默认配置
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function initConfig() {
+async function initConfig(): Promise<void> {
     try {
         const exists = await fs.pathExists(path.resolve('./data/config.json'));
         const data = {
@@ -87,7 +88,7 @@ async function initConfig() {
  * @returns {Promise<AppConfig>} 返回应用配置对象
  * @throws {Error} 配置文件读取失败时退出进程
  */
-async function readConfig() {
+async function readConfig(): Promise<AppConfig> {
     try {
         const configData = await fs.readJSON(path.resolve('./data/config.json'));
         return configData;

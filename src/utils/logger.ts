@@ -160,7 +160,7 @@ let loggerInstance: ReturnType<typeof pino>;
  * @param {AppConfig} config - 应用配置对象
  * @returns {Promise<ReturnType<typeof pino>>} 返回初始化后的 pino 日志实例
  */
-export async function initLogger(config: AppConfig) {
+export async function initLogger(config: AppConfig): Promise<ReturnType<typeof pino>> {
     const logLevel = LOG_LEVELS[config.log?.level ?? 4] || 'info';
     const logPath = config.log?.path || './logs';
     const enableConsole = config.log?.console !== false;
@@ -221,7 +221,7 @@ export async function initLogger(config: AppConfig) {
  * 返回全局日志记录器实例
  * @returns {ReturnType<typeof pino>} 返回 pino 日志实例
  */
-export function getLogger() {
+export function getLogger(): ReturnType<typeof pino> {
     if (!loggerInstance) {
         return pino({ level: 'info' });
     }

@@ -15,7 +15,7 @@ export interface AppConfig {
             key: string;
         };
         cors: {
-            enabled: boolean;
+            enable: boolean;
             origins: string;
             methods: string;
             preflightContinue: boolean;
@@ -27,7 +27,7 @@ export interface AppConfig {
             limit: number;
             statusCode: number;
             message: string;
-            standardHeaders: string;
+            standardHeaders: boolean | 'draft-6' | 'draft-7' | 'draft-8';
             legacyHeaders: boolean;
             validate: {
                 trustProxy: boolean;

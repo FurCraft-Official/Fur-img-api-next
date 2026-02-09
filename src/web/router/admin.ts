@@ -17,7 +17,7 @@ import config from '../../utils/config.js';
  * POST /admin/unban/:ip - 解封指定 IP 地址
  * @returns {Promise<void>} 异步操作完成后返回
  */
-async function routerAdmin() {
+async function routerAdmin(): Promise<void> {
     app.post('/admin/refresh', authMiddleware, async (req, res) => {
         try {
             res.status(200).json({ message: 'refresh database start' });

@@ -21,7 +21,7 @@ dayjs.extend(customParseFormat);
  * @param {string} baseScanPath - 基础扫描路径，用于计算相对 URL
  * @returns {Object} 格式化后的文件信息对象，包含 id、name、size、mtime、url
  */
-const formatFileInfo = (fileObj: fileObj, baseScanPath: string) => {
+const formatFileInfo = (fileObj: fileObj, baseScanPath: string): { id: number; name: string; size: number; mtime: any; url: string } | undefined => {
     try {
         const absolutePath = path.resolve(fileObj.path);
         const stats = fs.statSync(absolutePath);
