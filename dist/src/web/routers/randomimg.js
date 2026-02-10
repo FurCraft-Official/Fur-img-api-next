@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { app } from '../server.js';
 import { getRandomFromAll, getRandomFromFolder } from '../../database/db.js';
-import { formatFileInfo } from '../middleware.js';
+import { formatFileInfo } from '../middlewares/middleware.js';
 import mime from 'mime-types';
 async function routerRandomIMG() {
     app.get('/api', (req, res) => {

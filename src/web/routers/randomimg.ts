@@ -10,7 +10,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { app } from '../server.js';
 import { getRandomFromAll, getRandomFromFolder } from '../../database/db.js';
-import { formatFileInfo } from '../middleware.js';
+import { formatFileInfo } from '../middlewares/middleware.js';
 import mime from 'mime-types';
 import { fileObj } from '../../types/index.js';
 

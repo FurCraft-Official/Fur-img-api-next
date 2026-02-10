@@ -190,7 +190,7 @@ export async function initLogger(config: AppConfig): Promise<ReturnType<typeof p
             level: logLevel,
             stream: pretty({
                 colorize: true,
-                translateTime: 'yyyy-mm-dd HH:MM:ss',
+                translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
                 ignore: 'pid,hostname',
                 singleLine: true,
                 messageFormat: '{msg}',
