@@ -5,7 +5,7 @@ async function initConfig() {
         const exists = await fs.pathExists(path.resolve('./data/config.json'));
         const data = {
             'server': {
-                'addr': 'localhost',
+                'addr': '0.0.0.0',
                 'httpport': 3000,
                 'httpsport': 3001,
                 'forcehttps': false,
@@ -16,7 +16,7 @@ async function initConfig() {
                     'key': './ssl/privkey.pem'
                 },
                 'cors': {
-                    'enabled': true,
+                    'enable': true,
                     'origins': '*',
                     'methods': 'GET, POST, PUT, DELETE, OPTIONS',
                     'preflightContinue': false,
@@ -29,10 +29,7 @@ async function initConfig() {
                     'statusCode': 429,
                     'message': 'too many requests',
                     'standardHeaders': 'draft-8',
-                    'legacyHeaders': false,
-                    'validate': {
-                        'trustProxy': false
-                    }
+                    'legacyHeaders': false
                 }
             },
             'db': {
@@ -46,13 +43,13 @@ async function initConfig() {
                 'console': true,
                 'file': true,
                 'maxFiles': 7,
-                'maxSize': '10M'
+                'maxSize': 10
             },
             'paths': {
                 'html': './public',
                 'images': './img'
             },
-            'admintoken': '114514'
+            'admintoken': ''
         };
         if (!exists) {
             try {

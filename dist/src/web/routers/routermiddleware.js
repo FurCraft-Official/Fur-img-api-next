@@ -21,7 +21,7 @@ async function rouerMiddlewares() {
             limit: config.server.rateLimit.limit,
             standardHeaders: config.server.rateLimit.standardHeaders,
             legacyHeaders: config.server.rateLimit.legacyHeaders,
-            validate: config.server.rateLimit.validate,
+            validate: { trustProxy: true },
             message: config.server.rateLimit.message,
             statusCode: config.server.rateLimit.statusCode,
             store: new SqliteStore({
