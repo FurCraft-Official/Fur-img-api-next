@@ -29,9 +29,6 @@ export interface AppConfig {
             message: string;
             standardHeaders: boolean | 'draft-6' | 'draft-7' | 'draft-8';
             legacyHeaders: boolean;
-            validate: {
-                trustProxy: boolean;
-            };
         };
     };
     db: {

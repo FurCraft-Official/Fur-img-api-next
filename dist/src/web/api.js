@@ -1,10 +1,10 @@
 import logger from '../utils/loggerInstance.js';
-import { routerAdmin } from './router/admin.js';
-import { routerStaticfiles } from './router/staticfiles.js';
-import { routerRandomIMG } from './router/randomimg.js';
+import { routerAdmin } from './routers/admin.js';
+import { routerStaticfiles } from './routers/staticfiles.js';
+import { routerRandomIMG } from './routers/randomimg.js';
 import { app } from './server.js';
-import { routerStatus } from './router/status.js';
-import { rouerMiddlewares } from './router/routermiddleware.js';
+import { routerStatus } from './routers/status.js';
+import { rouerMiddlewares } from './routers/routermiddleware.js';
 async function createRoute() {
     app.set('trust proxy', 'loopback');
     rouerMiddlewares();

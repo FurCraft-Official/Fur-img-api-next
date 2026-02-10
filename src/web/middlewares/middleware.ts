@@ -6,11 +6,11 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
-import logger from '../utils/loggerInstance.js';
+import logger from '../../utils/loggerInstance.js';
 import dayjs from 'dayjs';
-import config from '../utils/config.js';
+import config from '../../utils/config.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
-import { fileObj } from '../types/index.js';
+import { fileObj } from '../../types/index.js';
 dayjs.extend(customParseFormat);
 
 /**

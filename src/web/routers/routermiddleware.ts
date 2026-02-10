@@ -4,7 +4,7 @@ import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import { SqliteStore } from 'rate-limit-sqlite';
 import { app } from '../server.js';
-import { requestLogger } from '../middleware.js';
+import { requestLogger } from '../middlewares/middleware.js';
 
 async function rouerMiddlewares(): Promise<void> {
     if (config.server.cors.enable) {
@@ -24,7 +24,7 @@ async function rouerMiddlewares(): Promise<void> {
             limit: config.server.rateLimit.limit,
             standardHeaders: config.server.rateLimit.standardHeaders,
             legacyHeaders: config.server.rateLimit.legacyHeaders,
-            validate: config.server.rateLimit.validate,
+            validate: { trustProxy: true },
             message: config.server.rateLimit.message,
             statusCode: config.server.rateLimit.statusCode,
             store: new SqliteStore({

@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
-import logger from '../utils/loggerInstance.js';
+import logger from '../../utils/loggerInstance.js';
 import dayjs from 'dayjs';
-import config from '../utils/config.js';
+import config from '../../utils/config.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
 const formatFileInfo = (fileObj, baseScanPath) => {

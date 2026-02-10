@@ -1,5 +1,5 @@
 import { app } from '../server.js';
-import { authMiddleware } from '../middleware.js';
+import { authMiddleware } from '../middlewares/middleware.js';
 import { clearDatabase, flush, saveToDatabase, unbanIp } from '../../database/db.js';
 import { scanDirectory } from '../../utils/scanner.js';
 import logger from '../../utils/loggerInstance.js';

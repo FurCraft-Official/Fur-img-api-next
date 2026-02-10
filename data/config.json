@@ -24,10 +24,7 @@
             "statusCode": 429,
             "message": "too many requests",
             "standardHeaders": "draft-8",
-            "legacyHeaders": false,
-            "validate": {
-                "trustProxy": false
-            }
+            "legacyHeaders": false
         }
     },
     "db": {
@@ -47,5 +44,5 @@
         "html": "./public",
         "images": "./img"
     },
-    "admintoken": "114514"
+    "admintoken": ""
 }
