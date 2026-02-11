@@ -7,6 +7,10 @@ import { app } from '../server.js';
 import { requestLogger } from '../middlewares/middleware.js';
 
 async function rouerMiddlewares(): Promise<void> {
+    app.use((req, res, next) => {
+        // 日志中间件
+        requestLogger(req, res, next);
+    });
     if (config.server.cors.enable) {
         // 启用cors中间件
         const corsConfig = {
@@ -62,10 +66,6 @@ async function rouerMiddlewares(): Promise<void> {
             }
         }));
     }
-    app.use((req, res, next) => {
-        // 日志中间件
-        requestLogger(req, res, next);
-    });
 }
 
 export { rouerMiddlewares };

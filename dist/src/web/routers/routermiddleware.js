@@ -6,6 +6,9 @@ import { SqliteStore } from 'rate-limit-sqlite';
 import { app } from '../server.js';
 import { requestLogger } from '../middlewares/middleware.js';
 async function rouerMiddlewares() {
+    app.use((req, res, next) => {
+        requestLogger(req, res, next);
+    });
     if (config.server.cors.enable) {
         const corsConfig = {
             'origin': config.server.cors.origins,
@@ -50,9 +53,6 @@ async function rouerMiddlewares() {
             }
         }));
     }
-    app.use((req, res, next) => {
-        requestLogger(req, res, next);
-    });
 }
 export { rouerMiddlewares };
 //# sourceMappingURL=routermiddleware.js.map
