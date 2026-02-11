@@ -146,6 +146,7 @@ docker run -d \
   -v /path/to/ssl:/app/ssl \
   -v /path/to/public:/app/public \
   -v /path/to/data:/app/data \
+  -v /path/to/logs:/app/logs \
   fasfuah/fur-img-api-next
 ```
 
@@ -157,6 +158,7 @@ docker run -d \
 - `-v /path/to/ssl:/app/ssl` - SSL证书目录持久化卷
 - `-v /path/to/public:/app/public` - 公共文件目录持久化卷
 - `-v /path/to/data:/app/data` - 挂载data目录
+- `-v /path/to/logs:/app/logs` - 挂载日志目录
 
 **容器访问：**
 ```bash
